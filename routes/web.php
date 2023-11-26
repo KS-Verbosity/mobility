@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\BikeStatus;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,20 +38,59 @@ Route::get('pull', function () {
         var_dump($key, $bike['lat'], $bike['lon']);
         echo '</pre>';
 
-        //$cpref= new Cpref();
-        // $cpref->user_id = $user_id;
+        $newbike = new BikeStatus();
+        $newbike->bike_id = $bike['bike_id'];
+        $newbike->lat = $bike['lat'];
+        $newbike->lng = $bike['lon'];
+        $newbike->vendor = 'Lyft';
+        $newbike->save();
         // $cpref->qatype = $save_catp; // need to put the array value here
         // $cpref->type = 1;
         //$cpref->save();
 
     }
-    dd($bikes);
-    //dd($lz->first()->data->bikes);
-    //dd($lz);
-    // foreach ($bikes as $bike) {
-    //     var_dump($bike[0]);
-    // }
+    dd('DONE');
+
 });
+
+Route::get('lime', function () {
+    //LazyCollection::fromJson($source);
+    //Lyft station_information
+    //$url = 'https://s3.amazonaws.com/lyft-lastmile-production-iad/lbs/chi/station_information.json';
+
+    //Lyft bike status
+    $url = 'https://data.lime.bike/api/partners/v1/gbfs/chicago/free_bike_status';
+
+    $source = Http::get($url); // Laravel HTTP client response
+
+    // $src = json_decode($source);
+    //$lz = lazyJson($src);
+    // dd($lz);
+
+    $srcjson = $source->json();
+
+    $bikes = $srcjson['data']['bikes'];
+
+    foreach ($bikes as $key => $bike) {
+
+        echo '<pre>';
+        var_dump($key, $bike['lat'], $bike['lon']);
+        echo '</pre>';
+
+        $newbike = new BikeStatus();
+        $newbike->bike_id = $bike['bike_id'];
+        $newbike->lat = $bike['lat'];
+        $newbike->lng = $bike['lon'];
+        $newbike->bike_type = $bike['vehicle_type'];
+        $newbike->vendor = 'Lime';
+        $newbike->save();
+
+    }
+    dd('DONE');
+
+});
+
+//  https://data.lime.bike/api/partners/v1/gbfs/chicago/free_bike_status
 
 // LYFT
 // name	"gbfs"
