@@ -14,23 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [App\Http\Controllers\MapController::class, 'index']);
 
-Route::get('pull', function () {
-    //LazyCollection::fromJson($source);
-    //Lyft station_information
-    //$url = 'https://s3.amazonaws.com/lyft-lastmile-production-iad/lbs/chi/station_information.json';
+// Route::get('/', function () {
+
+//     return view('welcome');
+// });
+
+Route::get('lyft-station', function () {
 
     //Lyft bike status
-    $url = 'https://s3.amazonaws.com/lyft-lastmile-production-iad/lbs/chi/free_bike_status.json';
+    $url = 'https://s3.amazonaws.com/lyft-lastmile-production-iad/lbs/chi/station_information.json';
 
     $source = Http::get($url); // Laravel HTTP client response
     $lz = lazyJson($source);
-    $first = $lz->first();
-    $bikes = $first;
-    //dd($lz->first());
+    //$first = $lz->first();
+    //$bikes = $first;
+    dd($lz->first());
 
     foreach ($bikes['bikes'] as $key => $bike) {
 
